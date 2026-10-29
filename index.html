@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>緣來Ru's 流月運勢</title>
+<meta name="description" content="緣來Ru's 命理工作室 — 輸入生辰，查看你的八字本月流月運勢">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f1e8; --paper:#fffaf2; --ink:#2b1d1f; --muted:#7b6a66; --line:#e6d9c7;
+  --accent:#7a3e48; --accent-ink:#fff; --gold:#b08a3e; --gold-soft:#f3e7cc;
+  --wood:#3f7d4e; --fire:#c0432f; --earth:#a1702b; --metal:#8a8f99; --water:#2f5e93;
+  --shadow:0 1px 2px rgba(60,30,20,.06),0 8px 28px rgba(60,30,20,.08);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#17110f; --paper:#221a18; --ink:#f2e8dc; --muted:#b3a297; --line:#3a2e2a;
+  --accent:#d08a95; --accent-ink:#1c1210; --gold:#d6b46a; --gold-soft:#3a2f1c;
+  --wood:#7cc28c; --fire:#ef7d68; --earth:#d8a65a; --metal:#b9bfc9; --water:#79a8e0;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35);
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Noto Sans TC",system-ui,sans-serif;
+  background-image:radial-gradient(circle at 15% -10%,var(--gold-soft),transparent 45%)}
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 64px}
+header{text-align:center;margin-bottom:22px}
+.brand{font-family:"Noto Serif TC",serif;font-weight:700;font-size:30px;letter-spacing:.08em;margin:0}
+.brand small{display:block;font-size:13px;letter-spacing:.4em;color:var(--gold);font-weight:600;margin-top:2px}
+.month-badge{display:inline-flex;flex-direction:column;align-items:center;margin-top:18px;padding:12px 26px;border:1px solid var(--gold);
+  border-radius:14px;background:var(--paper)}
+.month-badge b{font-family:"Noto Serif TC",serif;font-size:22px;color:var(--accent);letter-spacing:.1em}
+.month-badge span{font-size:13px;color:var(--muted)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow);margin-top:18px}
+h2{font-family:"Noto Serif TC",serif;font-size:20px;margin:0 0 4px}
+.hint{color:var(--muted);font-size:14px;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500}
+label.f em{font-style:normal;color:var(--fire)}
+input[type=text],select,textarea{
+  font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:44px}
+select{appearance:none;cursor:pointer;padding-right:36px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+select:invalid{color:var(--muted)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+textarea{resize:vertical;min-height:70px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;min-height:44px}
+.seg label{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+span{color:var(--accent-ink)}
+.seg label:has(input:checked){background:var(--accent);color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:-3px}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;color:var(--muted);cursor:pointer}
+.chk input{margin-top:5px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.inline-chk{margin-top:6px}
+button.primary{font:inherit;font-weight:700;letter-spacing:.2em;width:100%;min-height:50px;border:0;border-radius:12px;
+  background:var(--accent);color:var(--accent-ink);cursor:pointer;margin-top:6px}
+button.primary:disabled{opacity:.55;cursor:wait}
+button.ghost{font:inherit;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:8px 16px;cursor:pointer;min-height:44px}
+.err{color:var(--fire);font-size:14px;min-height:1.4em;margin:8px 0 0}
+.privacy{font-size:12.5px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 12px;margin:0}
+/* 結果 */
+.result-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.meta{font-size:14px;color:var(--muted);margin:0}
+.pillars{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:8px;margin:18px 0 6px;text-align:center}
+.pillar{border:1px solid var(--line);border-radius:12px;padding:10px 4px;background:var(--bg)}
+.pillar .t{font-size:12px;color:var(--muted)}
+.pillar .ss{font-size:12px;color:var(--gold);min-height:1.5em}
+.pillar .gz{font-family:"Noto Serif TC",serif;font-size:30px;line-height:1.25;font-weight:700}
+.pillar .ny{font-size:11.5px;color:var(--muted)}
+.wx-木{color:var(--wood)}.wx-火{color:var(--fire)}.wx-土{color:var(--earth)}.wx-金{color:var(--metal)}.wx-水{color:var(--water)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;padding:0;list-style:none}
+.facts li{font-size:13.5px;border-radius:999px;padding:4px 12px;background:var(--gold-soft)}
+.wxbar{display:flex;gap:6px;margin-top:14px}
+.wxbar div{flex:1;text-align:center;font-size:13px}
+.wxbar i{display:block;height:6px;border-radius:3px;background:currentColor;opacity:.85;margin-bottom:4px}
+.fortune-top{text-align:center;padding:8px 0 14px;border-bottom:1px dashed var(--line);margin-bottom:6px}
+.fortune-top .gz{font-family:"Noto Serif TC",serif;font-size:26px;font-weight:700;letter-spacing:.1em}
+.stars{font-size:26px;color:var(--gold);letter-spacing:.12em}
+.fortune-top .ss{font-size:14px;color:var(--muted)}
+.cat{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cat:last-child{border-bottom:0}
+.cat b{font-family:"Noto Serif TC",serif;color:var(--accent);font-size:17px}
+.cat p{margin:0}
+.note{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:28px}
+.btn{display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;border-radius:12px;min-height:46px;padding:0 18px}
+a.btn.primary{background:var(--accent);color:var(--accent-ink);letter-spacing:.15em;margin-top:16px}
+a.btn.ghost{border:1px solid var(--line);color:var(--ink);flex:none;font-size:14px}
+.promo{border-color:var(--gold)}
+.prices{list-style:none;margin:0;padding:0}
+.prices li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.prices li:last-child{border-bottom:0}
+.prices b{display:block;font-family:"Noto Serif TC",serif;color:var(--accent)}
+.prices span{font-size:13.5px;color:var(--muted)}
+.prices strong{font-family:"Noto Serif TC",serif;font-size:20px;white-space:nowrap}
+.ig{display:flex;align-items:center;gap:14px;padding:16px 20px}
+.ig > div{flex:1}
+.ig p{margin:0;font-size:14px;color:var(--muted)}
+.ig-icon{flex:none;width:40px;height:40px;border-radius:12px;
+  background:radial-gradient(circle at 30% 110%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285aeb 90%);position:relative}
+.ig-icon::before{content:"";position:absolute;inset:9px;border:2.5px solid #fff;border-radius:8px}
+@media (max-width:520px){.ig{flex-wrap:wrap}.ig a.btn.ghost{width:100%}}
+.ig-icon::after{content:"";position:absolute;width:9px;height:9px;left:15.5px;top:15.5px;border:2.5px solid #fff;border-radius:50%;box-sizing:border-box}
+[hidden]{display:none!important}
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr}
+  .card{padding:18px}
+  .pillar .gz{font-size:24px}
+  .cat{grid-template-columns:1fr;gap:2px}
+}
+@media print{body{background:#fff}.no-print{display:none!important}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 class="brand">緣來Ru's<small>命理工作室</small></h1>
+    <div class="month-badge" id="monthBadge">
+      <b id="mLabel">本月流月運勢</b>
+      <span id="mRange">載入中…</span>
+    </div>
+  </header>
+
+  <form class="card no-print" id="form" novalidate>
+    <h2>輸入你的生辰</h2>
+    <p class="hint">本站僅提供「當月」流月運勢；每月節氣交替後即可查詢新的月份。</p>
+    <div class="grid">
+      <label class="f">姓名（選填）
+        <input type="text" name="name" maxlength="20" autocomplete="name">
+      </label>
+      <div class="f">
+        <span id="gLabel">性別 <em>*</em></span>
+        <div class="seg" role="radiogroup" aria-labelledby="gLabel">
+          <label><input type="radio" name="gender" value="男" checked><span>男</span></label>
+          <label><input type="radio" name="gender" value="女"><span>女</span></label>
+        </div>
+      </div>
+      <label class="f">國曆出生年月日 <em>*</em>
+        <input type="text" name="date" placeholder="YYYY/MM/DD　例：1990/05/15" inputmode="numeric" maxlength="10"
+               autocomplete="bday" pattern="\d{4}/\d{2}/\d{2}" required>
+      </label>
+      <label class="f">出生時辰 <em>*</em>
+        <select name="hour" required>
+          <option value="" selected disabled>請選擇時辰</option>
+          <option value="unknown">不知道時辰</option>
+          <option value="23:30">子時（早子）23:00–00:00</option>
+          <option value="00:30">子時（晚子）00:00–01:00</option>
+          <option value="02:00">丑時 01:00–03:00</option>
+          <option value="04:00">寅時 03:00–05:00</option>
+          <option value="06:00">卯時 05:00–07:00</option>
+          <option value="08:00">辰時 07:00–09:00</option>
+          <option value="10:00">巳時 09:00–11:00</option>
+          <option value="12:00">午時 11:00–13:00</option>
+          <option value="14:00">未時 13:00–15:00</option>
+          <option value="16:00">申時 15:00–17:00</option>
+          <option value="18:00">酉時 17:00–19:00</option>
+          <option value="20:00">戌時 19:00–21:00</option>
+          <option value="22:00">亥時 21:00–23:00</option>
+        </select>
+      </label>
+      <p class="privacy full">台灣於 1945–1979 年間部分年份實施夏令時間，若出生於該期間，請先將出生時間減 1 小時再選時辰。</p>
+      <label class="chk full"><input type="checkbox" name="consent">
+        我同意緣來Ru's 命理工作室蒐集上述生辰，僅用於流月運勢分析，不提供給第三方。</label>
+    </div>
+    <p class="err" id="err" role="alert"></p>
+    <button class="primary" id="submit" type="submit">查看本月運勢</button>
+  </form>
+
+  <section id="result" hidden>
+    <div class="card">
+      <div class="result-head">
+        <div>
+          <h2 id="rName"></h2>
+          <p class="meta" id="rBirth"></p>
+          <p class="meta" id="rLunar"></p>
+        </div>
+        <button class="ghost no-print" id="again" type="button">重新查詢</button>
+      </div>
+      <div class="pillars" id="pillars"></div>
+      <ul class="facts" id="facts"></ul>
+      <div class="wxbar" id="wxbar"></div>
+    </div>
+
+    <div class="card">
+      <div class="fortune-top">
+        <div class="ss" id="fMonth"></div>
+        <div class="gz" id="fGz"></div>
+        <div class="stars" id="fStars" aria-label=""></div>
+        <div class="ss" id="fSS"></div>
+      </div>
+      <div id="cats"></div>
+      <p class="note">以上是依緣來Ru's工作室盤論推算，僅供參考。</p>
+    </div>
+
+    <div class="card promo">
+      <h2>想看完整的流年運勢？</h2>
+      <p class="hint">由緣來Ru's 一對一詳批，有任何問題歡迎諮詢。</p>
+      <ul class="prices">
+        <li><div><b>命盤＋流年（首次排盤）</b><span>命盤分析 1,600 元 ＋ 流年運勢 1,200 元</span></div><strong>2,800 元</strong></li>
+        <li><div><b>流年運勢（舊雨新知）</b><span>已排過命盤者</span></div><strong>1,200 元</strong></li>
+      </ul>
+      <a class="btn primary" id="formLink" target="_blank" rel="noopener" hidden>填寫報名表單</a>
+    </div>
+  </section>
+
+  <div class="card ig">
+    <span class="ig-icon" aria-hidden="true"></span>
+    <div>
+      <b>追蹤緣來Ru's</b>
+      <p>到 Instagram 搜尋「<strong>緣來Ru's</strong>」（@rebecca.slow1992），每月運勢分享不漏接</p>
+    </div>
+    <a class="btn ghost" id="igLink" target="_blank" rel="noopener" hidden>前往 IG</a>
+  </div>
+
+  <footer>© 緣來Ru's 命理工作室</footer>
+</div>
+
+<script>
+// ===== 工作室設定：貼上網址後，對應的按鈕才會出現 =====
+const CONFIG = {
+  formUrl: "https://forms.gle/M8iLMBoGWPekY2xk9",   // Google 表單報名網址
+  igUrl: "https://www.instagram.com/rebecca.slow1992/",   // IG 帳號網址
+  // Apps Script 正式網址：網頁放在 GitHub Pages 時，透過它排盤並寫入試算表（用 Node 伺服器時改成 ""）
+  apiUrl: "https://script.google.com/macros/s/AKfycby8Ett4sUUpiqhj-Krhntv-tkeqReIr-TNk0HFcBfaW56MnCFB4ZNdZfiDVzmZMFutk/exec"
+};
+// =====================================================
+const $ = s => document.querySelector(s);
+if (CONFIG.formUrl) Object.assign($("#formLink"), { href: CONFIG.formUrl, hidden: false });
+if (CONFIG.igUrl) Object.assign($("#igLink"), { href: CONFIG.igUrl, hidden: false });
+const MONTH_CN = "正二三四五六七八九十冬臘";
+const ZHI = "子丑寅卯辰巳午未申酉戌亥";
+const wx = s => [...s].map(c => `<span class="wx-${WX[c]}">${c}</span>`).join("");
+const WX = {甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水",
+  子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
+const md = s => s.slice(5).replace("-", "/");
+const lunarMonthName = gz => MONTH_CN[(ZHI.indexOf(gz[1]) + 10) % 12] + "月";
+
+function showMonth(m) {
+  $("#mLabel").textContent = `${m.yearGz}年 ${m.gz}月 流月運勢`;
+  $("#mRange").textContent = `${m.jieName} ${md(m.start)} ～ ${m.nextName} ${md(m.end)}（農曆${lunarMonthName(m.gz)}節令）`;
+}
+// 同一份頁面三種後端：
+//   1. 在 Apps Script 網頁內 → google.script.run
+//   2. 放在 GitHub Pages 等外部網站 → 呼叫 CONFIG.apiUrl（Apps Script 的 doPost）
+//   3. Node 伺服器 → /api
+const gas = window.google && google.script && google.script.run;
+const callGas = (fn, arg) => new Promise((ok, fail) =>
+  gas.withSuccessHandler(ok).withFailureHandler(e => fail(new Error(e && e.message || "查詢失敗")))[fn](arg));
+// 以純文字送出，瀏覽器不會先做跨網域預檢，Apps Script 才收得到
+const callApi = (action, body) => fetch(CONFIG.apiUrl, { method: "POST", body: JSON.stringify({ action, body }) })
+  .then(r => r.json())
+  .then(j => { if (!j.ok) throw new Error(j.error || "查詢失敗"); return j.data; });
+const api = {
+  month: () => gas ? callGas("getMonth") : CONFIG.apiUrl ? callApi("month") : fetch("/api/month").then(r => r.json()),
+  fortune: async body => {
+    if (gas) return callGas("submitFortune", body);
+    if (CONFIG.apiUrl) return callApi("fortune", body);
+    const res = await fetch("/api/fortune", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "查詢失敗");
+    return data;
+  }
+};
+api.month().then(showMonth).catch(() => { $("#mRange").textContent = ""; });
+
+// 生日輸入：只留數字，自動補上斜線 → YYYY/MM/DD
+const dateInput = document.querySelector("[name=date]");
+dateInput.addEventListener("input", () => {
+  const d = dateInput.value.replace(/\D/g, "").slice(0, 8);
+  dateInput.value = [d.slice(0, 4), d.slice(4, 6), d.slice(6)].filter(Boolean).join("/");
+});
+function parseDate(s) {
+  const m = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(s.trim());
+  if (!m) return null;
+  const [y, mo, d] = m.slice(1).map(Number), dt = new Date(Date.UTC(y, mo - 1, d));
+  return dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d ? `${m[1]}-${m[2]}-${m[3]}` : null;
+}
+
+$("#form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = new FormData(e.target), err = $("#err");
+  const hour = f.get("hour") || "";
+  const body = {
+    name: f.get("name").trim(), gender: f.get("gender"), date: parseDate(f.get("date")),
+    time: hour === "unknown" ? "" : hour,
+    consent: f.get("consent") === "on"
+  };
+  if (!body.date) return err.textContent = "請依 YYYY/MM/DD 格式輸入正確的出生年月日，例如 1990/05/15";
+  if (!hour) return err.textContent = "請選擇出生時辰（不清楚可選「不知道時辰」）";
+  if (!body.consent) return err.textContent = "請勾選同意聲明";
+  err.textContent = "";
+  const btn = $("#submit"); btn.disabled = true; btn.textContent = "排盤中…";
+  try {
+    render(await api.fortune(body));
+  } catch (ex) {
+    err.textContent = ex.message || "連線失敗，請稍後再試";
+  } finally {
+    btn.disabled = false; btn.textContent = "查看本月運勢";
+  }
+});
+
+function render(r) {
+  $("#rName").textContent = `${r.name || "您的命盤"}　${r.birth.gender}`;
+  $("#rBirth").textContent = `國曆 ${r.birth.solar.slice(0, 10).replace(/-/g, "/")}　${r.birth.shichen}　生肖 ${r.birth.zodiac}`;
+  $("#rLunar").textContent = `農曆 ${r.birth.lunar}`;
+  const pl = $("#pillars"); pl.style.setProperty("--n", r.pillars.length);
+  pl.innerHTML = r.pillars.map(p => `<div class="pillar"><div class="t">${p.title}</div><div class="ss">${p.sg}</div>
+    <div class="gz">${wx(p.gz[0])}<br>${wx(p.gz[1])}</div><div class="ny">${p.ny}</div></div>`).join("");
+  $("#facts").innerHTML = [
+    `日主 ${r.dayMaster}`,
+    r.strong ? "身強（喜食傷、財、官殺）" : "身弱（喜印、比劫）",
+    r.lack.length ? `五行缺 ${r.lack.join("、")}` : "五行俱全"
+  ].map(x => `<li>${x}</li>`).join("");
+  const max = Math.max(...Object.values(r.wuxing), 1);
+  $("#wxbar").innerHTML = Object.entries(r.wuxing).map(([k, v]) =>
+    `<div class="wx-${k}"><i style="opacity:${v ? .25 + .75 * v / max : .12}"></i>${k} ${v}</div>`).join("");
+
+  const m = r.month;
+  showMonth(m);
+  $("#fMonth").textContent = `${m.yearGz}年 農曆${lunarMonthName(m.gz)}（${m.jieName} ${md(m.start)} ～ ${m.nextName} ${md(m.end)}）`;
+  $("#fGz").innerHTML = wx(m.gz) + " 月";
+  $("#fStars").textContent = "★".repeat(m.stars) + "☆".repeat(5 - m.stars);
+  $("#fStars").setAttribute("aria-label", `${m.stars} 顆星（滿分 5）`);
+  $("#fSS").textContent = `流月十神：${m.ganSS}／${m.zhiSS}`;
+  const cats = [["overall","整體"],["career","事業"],["wealth","財運"],["love","感情"],["health","健康"]];
+  const box = $("#cats"); box.innerHTML = "";
+  cats.forEach(([k, l]) => {
+    const d = document.createElement("div"); d.className = "cat";
+    const b = document.createElement("b"); b.textContent = l;
+    const p = document.createElement("p"); p.textContent = m[k];
+    d.append(b, p); box.append(d);
+  });
+  $("#form").hidden = true; $("#result").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+$("#again").addEventListener("click", () => {
+  $("#result").hidden = true; $("#form").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
+</body>
+</html>
