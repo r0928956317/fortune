@@ -81,11 +81,24 @@ button.ghost{font:inherit;border:1px solid var(--line);background:transparent;co
 .fortune-top .gz{font-family:"Noto Serif TC",serif;font-size:26px;font-weight:700;letter-spacing:.1em}
 .stars{font-size:26px;color:var(--gold);letter-spacing:.12em}
 .fortune-top .ss{font-size:14px;color:var(--muted)}
-.cat{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cat{display:grid;grid-template-columns:5.5em 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
 .cat:last-child{border-bottom:0}
 .cat b{font-family:"Noto Serif TC",serif;color:var(--accent);font-size:17px}
 .cat p{margin:0}
 .note{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
+.luck{margin-top:8px;padding:16px 18px;border-radius:12px;background:var(--gold-soft)}
+.luck h3{font-family:"Noto Serif TC",serif;font-size:17px;margin:0 0 10px;color:var(--accent)}
+.luck dl{display:grid;grid-template-columns:5.5em 1fr;gap:8px 12px;margin:0}
+.luck dt{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:6px}
+.luck dd{margin:0}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dot.good{background:var(--wood)}.dot.caution{background:var(--earth)}
+.dates{display:flex;flex-wrap:wrap;gap:6px}
+.dates span{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:14px}
+.dates span.past{color:var(--muted);text-decoration:line-through;opacity:.7}
+.all-past{align-self:center;font-size:12.5px;color:var(--muted)}
+.luck-tip{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+.cta{font-family:"Noto Serif TC",serif;font-size:16.5px;font-weight:600;margin:6px 0 4px;color:var(--ink)}
 footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:28px}
 .btn{display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;border-radius:12px;min-height:46px;padding:0 18px}
 a.btn.primary{background:var(--accent);color:var(--accent-ink);letter-spacing:.15em;margin-top:16px}
@@ -193,11 +206,23 @@ a.btn.ghost{border:1px solid var(--line);color:var(--ink);flex:none;font-size:14
         <div class="ss" id="fSS"></div>
       </div>
       <div id="cats"></div>
+      <div class="luck">
+        <h3>本月開運提醒</h3>
+        <dl>
+          <dt>幸運色</dt><dd id="lColor"></dd>
+          <dt>幸運方位</dt><dd id="lDir"></dd>
+          <dt>幸運數字</dt><dd id="lNum"></dd>
+          <dt><span class="dot good"></span>順心日</dt><dd id="dGood" class="dates"></dd>
+          <dt><span class="dot caution"></span>留意日</dt><dd id="dCaution" class="dates"></dd>
+        </dl>
+        <p class="luck-tip">幸運色、方位依你命盤的喜用五行（<span id="lEl"></span>）推算。順心日適合洽談、約會、做決定；留意日宜放慢腳步、多包容。</p>
+      </div>
       <p class="note">以上是依緣來Ru's工作室盤論推算，僅供參考。</p>
     </div>
 
     <div class="card promo">
       <h2>想看完整的流年運勢？</h2>
+      <p class="cta" id="cta"></p>
       <p class="hint">由緣來Ru's 一對一詳批，有任何問題歡迎諮詢。</p>
       <ul class="prices">
         <li><div><b>命盤＋流年（首次排盤）</b><span>命盤分析 1,600 元 ＋ 流年運勢 1,200 元</span></div><strong>2,800 元</strong></li>
@@ -326,7 +351,7 @@ function render(r) {
   $("#fStars").textContent = "★".repeat(m.stars) + "☆".repeat(5 - m.stars);
   $("#fStars").setAttribute("aria-label", `${m.stars} 顆星（滿分 5）`);
   $("#fSS").textContent = `流月十神：${m.ganSS}／${m.zhiSS}`;
-  const cats = [["overall","整體"],["career","事業"],["wealth","財運"],["love","感情"],["health","健康"]];
+  const cats = [["overall","整體運勢"],["career","事業學業"],["wealth","財運方面"],["love","人際/感情"],["health","健康問題"]];
   const box = $("#cats"); box.innerHTML = "";
   cats.forEach(([k, l]) => {
     const d = document.createElement("div"); d.className = "cat";
@@ -334,6 +359,34 @@ function render(r) {
     const p = document.createElement("p"); p.textContent = m[k];
     d.append(b, p); box.append(d);
   });
+  // 開運提醒與個人化引導（舊版後端沒有這些欄位時就不顯示）
+  $(".luck").hidden = !r.lucky;
+  if (r.lucky) {
+    $("#lColor").textContent = r.lucky.colors;
+    $("#lDir").textContent = r.lucky.directions;
+    $("#lNum").textContent = r.lucky.numbers;
+    $("#lEl").textContent = r.lucky.elements.join("、");
+    const chips = (el, list) => {
+      el.innerHTML = "";
+      list.forEach(ymd => {
+        const s = document.createElement("span");
+        s.textContent = md(ymd);
+        if (ymd < m.today) s.className = "past";
+        el.append(s);
+      });
+      if (!list.length) el.textContent = "本月無";
+      else if (list.every(ymd => ymd < m.today)) {
+        const s = document.createElement("small");
+        s.className = "all-past";
+        s.textContent = `本月已過，${m.nextName}後更新`;
+        el.append(s);
+      }
+    };
+    chips($("#dGood"), m.days.good);
+    chips($("#dCaution"), m.days.caution);
+  }
+  $("#cta").textContent = r.cta || "";
+  $("#cta").hidden = !r.cta;
   $("#form").hidden = true; $("#result").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
